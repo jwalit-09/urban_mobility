@@ -33,6 +33,7 @@ else:
     from app.services.saga_service import saga_orchestrator
     from app.repositories.data_store import data_store
     from app.core.security import verify_password, create_access_token, decode_access_token, hash_password
+    from app.api.v1.endpoints.lab import PRECONFIGURED_QUERIES
 
     class MobilityHttpHandler(BaseHTTPRequestHandler):
         def _set_cors_headers(self, status=200):
@@ -111,6 +112,11 @@ else:
                     for c in rag_service.chunks
                 ]
                 self.wfile.write(json.dumps(docs).encode('utf-8'))
+
+            elif normalized == '/api/lab/queries':
+                self._set_cors_headers(200)
+                self.end_headers()
+                self.wfile.write(json.dumps(PRECONFIGURED_QUERIES).encode('utf-8'))
 
             elif normalized == '/docs':
                 self.send_response(200)
@@ -237,6 +243,25 @@ else:
                 self._set_cors_headers(200)
                 self.end_headers()
                 self.wfile.write(json.dumps(res).encode('utf-8'))
+
+            elif normalized == '/api/lab/run':
+                query_id = body.get('id', 'recursive_cte')
+                matched = next((q for q in PRECONFIGURED_QUERIES if q['id'] == query_id), PRECONFIGURED_QUERIES[0])
+                time.sleep(0.04)
+                resp = {
+                    "queryId": matched["id"],
+                    "title": matched["title"],
+                    "type": matched["type"],
+                    "sql": matched["sql"],
+                    "columns": matched["columns"],
+                    "rows": matched["rows"],
+                    "executionTimeMs": 42.8,
+                    "rowCount": len(matched["rows"]),
+                    "status": "QUERY_SUCCESS"
+                }
+                self._set_cors_headers(200)
+                self.end_headers()
+                self.wfile.write(json.dumps(resp).encode('utf-8'))
 
             else:
                 self._set_cors_headers(404)

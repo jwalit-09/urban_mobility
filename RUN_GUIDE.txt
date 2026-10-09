@@ -1,0 +1,45 @@
+URBAN MOBILITY PROJECT - QUICK RUN
+
+OPTION A: easiest (local MySQL)
+1. Install MySQL 8 and Java 17 + Maven + Node.js.
+2. In MySQL run:
+   CREATE DATABASE urban_mobility;
+3. Open backend/src/main/resources/application.properties
+   Set:
+   spring.datasource.username=root
+   spring.datasource.password=YOUR_MYSQL_PASSWORD
+4. Start backend:
+   cd backend
+   mvn spring-boot:run
+5. Open a second terminal:
+   cd frontend
+   npm install
+   npm run dev
+6. Open http://localhost:5173
+7. Login with:
+   user@mobility.com / user123
+8. Click Calculate Optimized Route.
+9. Click Process GPS Data to demonstrate ingestion + preprocessing.
+10. For admin-only endpoints use:
+    admin@mobility.com / admin123
+
+OPTION B: MySQL with Docker
+1. Install Docker Desktop.
+2. From the project root:
+   docker compose up -d
+3. Change application.properties to:
+   spring.datasource.username=mobility
+   spring.datasource.password=mobility123
+4. Start backend and frontend as above.
+
+WHAT TO DEMONSTRATE TO FACULTY
+1. Login -> JWT authentication
+2. Dashboard -> MySQL-backed routes/vehicles/traffic
+3. Route calculation -> Dijkstra + traffic-aware cost
+4. Process GPS Data -> data ingestion + preprocessing
+5. Postman -> REST endpoints
+6. MySQL -> show tables and stored records
+
+NOTE
+The project uses simulated GPS/traffic JSON input for a software-only college demonstration.
+It does not claim to have a physical GPS device or a live city traffic feed.

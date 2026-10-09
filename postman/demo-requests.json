@@ -1,0 +1,29 @@
+{
+  "login": {
+    "method": "POST",
+    "url": "http://localhost:8080/api/auth/login",
+    "body": {
+      "email": "user@mobility.com",
+      "password": "user123"
+    }
+  },
+  "routeCalculation": {
+    "method": "POST",
+    "url": "http://localhost:8080/api/routes/calculate",
+    "body": {
+      "source": "Central Station",
+      "destination": "Airport"
+    }
+  },
+  "dataIngestion": {
+    "method": "POST",
+    "url": "http://localhost:8080/api/ingestion/mobility",
+    "body": {
+      "type": "GPS",
+      "value": "Vehicle TS09AB1234",
+      "latitude": 17.385,
+      "longitude": 78.4867,
+      "routeId": 1
+    }
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "info": {
+    "name": "Urban Mobility Platform - Complete Polyglot API Collection (CO1-CO6)",
+    "description": "Comprehensive Postman test collection covering Auth, Routes, Dijkstra Engine, Fleet, Traffic, Ingestion, Vector RAG Assistant, Distributed Saga, and Actuator Observability.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000" },
+    { "key": "jwtToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication & Security (CO3)",
+      "item": [
+        {
+          "name": "Login - User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@mobility.com\",\n  \"password\": \"user123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Login - Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@mobility.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Routes & Dijkstra Intelligence (CO1, CO3)",
+      "item": [
+        {
+          "name": "Get All Routes",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/routes", "host": ["{{baseUrl}}"], "path": ["api", "routes"] }
+          }
+        },
+        {
+          "name": "Calculate Optimized Route (Dijkstra)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"Central Station\",\n  \"destination\": \"Airport\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/routes/calculate", "host": ["{{baseUrl}}"], "path": ["api", "routes", "calculate"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Fleet & Traffic Conditions (CO1, CO4)",
+      "item": [
+        {
+          "name": "Get Vehicles & Drivers",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/vehicles", "host": ["{{baseUrl}}"], "path": ["api", "vehicles"] }
+          }
+        },
+        {
+          "name": "Get Traffic Monitor",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/traffic", "host": ["{{baseUrl}}"], "path": ["api", "traffic"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. IoT Telemetry Ingestion (CO3, CO4)",
+      "item": [
+        {
+          "name": "Ingest GPS Mobility Record",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"GPS\",\n  \"value\": \"Vehicle TS09AB1234\",\n  \"latitude\": 17.3850,\n  \"longitude\": 78.4867,\n  \"routeId\": 1\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/ingestion/mobility", "host": ["{{baseUrl}}"], "path": ["api", "ingestion", "mobility"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Vector Database & RAG Assistant (CO2, CO3)",
+      "item": [
+        {
+          "name": "Query AI Transit Assistant (Semantic Search)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"What is the luggage policy on the Airport Express?\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/rag/ask", "host": ["{{baseUrl}}"], "path": ["api", "rag", "ask"] }
+          }
+        },
+        {
+          "name": "List Knowledge Documents Chunks",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/rag/documents", "host": ["{{baseUrl}}"], "path": ["api", "rag", "documents"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Microservices & Distributed Saga (CO5)",
+      "item": [
+        {
+          "name": "Execute Booking Saga Transaction",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trip_id\": 1,\n  \"seat_count\": 2\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/trips/saga/book", "host": ["{{baseUrl}}"], "path": ["api", "trips", "saga", "book"] }
+          }
+        },
+        {
+          "name": "Simulate Saga Failure & Automated Rollback",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trip_id\": 1,\n  \"seat_count\": 2\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/trips/saga/simulate-failure", "host": ["{{baseUrl}}"], "path": ["api", "trips", "saga", "simulate-failure"] }
+          }
+        }
+      ]
+    }
+  ]
+}

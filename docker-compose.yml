@@ -1,0 +1,179 @@
+services:
+  # ============================================================================
+  # 1. DATABASE & PERSISTENCE TIER (CO1, CO2)
+  # ============================================================================
+
+  # PostgreSQL 16 with pgvector extension enabled
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: mobility-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: urban_mobility
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ENABLES04$
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema-ddl.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    networks:
+      - mobility-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d urban_mobility"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB Document Store for IoT Telemetry & Reviews
+  mongo:
+    image: mongo:7.0
+    container_name: mobility-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - mobility-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Redis In-Memory Cache & Pub/Sub
+  redis:
+    image: redis:7.2-alpine
+    container_name: mobility-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - mobility-net
+
+  # ============================================================================
+  # 2. MICROSERVICES APPLICATION TIER (CO3, CO4, CO5)
+  # ============================================================================
+
+  # FastAPI API Gateway, RAG Engine & Saga Orchestrator (CO3, CO5)
+  gateway:
+    build:
+      context: ./backend-fastapi
+      dockerfile: Dockerfile
+    container_name: mobility-gateway
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:ENABLES04$@postgres:5432/urban_mobility
+      - MONGO_URL=mongodb://mongo:27017
+      - REDIS_URL=redis://redis:6379/0
+      - SPRING_BOOT_URL=http://transit-service:8080
+      - NODE_SERVICE_URL=http://telemetry-service:5000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+    networks:
+      - mobility-net
+
+  # Spring Boot Transit & Fleet Microservice (CO4, CO5)
+  transit-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mobility-transit-service
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/urban_mobility
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=ENABLES04$
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - mobility-net
+
+  # Node.js Express Telemetry & Socket.io Microservice (CO4, CO5)
+  telemetry-service:
+    build:
+      context: ./backend-node
+      dockerfile: Dockerfile
+    container_name: mobility-telemetry-service
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/urban_mobility_nosql
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - mobility-net
+
+  # ============================================================================
+  # 3. FRONTEND PRESENTATION TIER
+  # ============================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: mobility-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - gateway
+      - transit-service
+    networks:
+      - mobility-net
+
+  # ============================================================================
+  # 4. OBSERVABILITY & MONITORING TIER (CO6)
+  # ============================================================================
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: mobility-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - mobility-net
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: mobility-grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - mobility-net
+
+# Custom Bridge Network & Persistent Volumes
+networks:
+  mobility-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mongo_data:
+  redis_data:
+  grafana_data:

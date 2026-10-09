@@ -49,7 +49,13 @@ class MobilityDataStore:
         # 2. Seed Drivers
         self.drivers = [
             {"id": 1, "name": "Ravi Kumar", "license_number": "DL-TS-1001", "phone": "9000000001", "rating": 4.9},
-            {"id": 2, "name": "Anil Sharma", "license_number": "DL-TS-1002", "phone": "9000000002", "rating": 4.8}
+            {"id": 2, "name": "Anil Sharma", "license_number": "DL-TS-1002", "phone": "9000000002", "rating": 4.8},
+            {"id": 3, "name": "Sunita Rao", "license_number": "DL-TS-1003", "phone": "9000000003", "rating": 4.95},
+            {"id": 4, "name": "Mohammed Tariq", "license_number": "DL-TS-1004", "phone": "9000000004", "rating": 4.7},
+            {"id": 5, "name": "Priya Nair", "license_number": "DL-TS-1005", "phone": "9000000005", "rating": 4.85},
+            {"id": 6, "name": "Rajesh Varma", "license_number": "DL-TS-1006", "phone": "9000000006", "rating": 4.6},
+            {"id": 7, "name": "Vikram Singh", "license_number": "DL-TS-1007", "phone": "9000000007", "rating": 4.92},
+            {"id": 8, "name": "Aruna Reddy", "license_number": "DL-TS-1008", "phone": "9000000008", "rating": 4.88}
         ]
 
         # 3. Seed Vehicles
@@ -57,26 +63,122 @@ class MobilityDataStore:
             {
                 "id": 1,
                 "vehicle_number": "TS09AB1234",
-                "type": "Bus",
+                "type": "Scania City Bus",
                 "transit_mode": "BUS",
                 "capacity": 50,
-                "battery_or_fuel_pct": 90,
+                "battery_or_fuel_pct": 92,
                 "current_latitude": 17.3850,
                 "current_longitude": 78.4867,
                 "status": "ACTIVE",
+                "speed_kmh": 42,
+                "cabin_temp_c": 23.5,
+                "tire_pressure_psi": 34.0,
                 "driver": self.drivers[0]
             },
             {
                 "id": 2,
                 "vehicle_number": "TS09CD5678",
-                "type": "Electric Bus",
+                "type": "BYD K9 Electric Bus",
                 "transit_mode": "ELECTRIC_BUS",
                 "capacity": 40,
                 "battery_or_fuel_pct": 78,
                 "current_latitude": 17.4400,
                 "current_longitude": 78.3800,
                 "status": "ACTIVE",
+                "speed_kmh": 36,
+                "cabin_temp_c": 22.0,
+                "tire_pressure_psi": 35.2,
                 "driver": self.drivers[1]
+            },
+            {
+                "id": 3,
+                "vehicle_number": "TS09EF9012",
+                "type": "Volvo 8400 Hybrid",
+                "transit_mode": "HYBRID_BUS",
+                "capacity": 45,
+                "battery_or_fuel_pct": 84,
+                "current_latitude": 17.4125,
+                "current_longitude": 78.4350,
+                "status": "ACTIVE",
+                "speed_kmh": 48,
+                "cabin_temp_c": 24.0,
+                "tire_pressure_psi": 33.8,
+                "driver": self.drivers[2]
+            },
+            {
+                "id": 4,
+                "vehicle_number": "TS09GH3456",
+                "type": "Olectra Greentech EV",
+                "transit_mode": "ELECTRIC_BUS",
+                "capacity": 38,
+                "battery_or_fuel_pct": 65,
+                "current_latitude": 17.4930,
+                "current_longitude": 78.3980,
+                "status": "ACTIVE",
+                "speed_kmh": 28,
+                "cabin_temp_c": 22.8,
+                "tire_pressure_psi": 34.5,
+                "driver": self.drivers[3]
+            },
+            {
+                "id": 5,
+                "vehicle_number": "TS09IJ7890",
+                "type": "Tata Starbus Ultra EV",
+                "transit_mode": "ELECTRIC_BUS",
+                "capacity": 35,
+                "battery_or_fuel_pct": 94,
+                "current_latitude": 17.3616,
+                "current_longitude": 78.4747,
+                "status": "EN_ROUTE",
+                "speed_kmh": 52,
+                "cabin_temp_c": 23.0,
+                "tire_pressure_psi": 35.0,
+                "driver": self.drivers[4]
+            },
+            {
+                "id": 6,
+                "vehicle_number": "TS09KL2345",
+                "type": "Mercedes-Benz Citaro CNG",
+                "transit_mode": "CNG_BUS",
+                "capacity": 55,
+                "battery_or_fuel_pct": 59,
+                "current_latitude": 17.4330,
+                "current_longitude": 78.5020,
+                "status": "ACTIVE",
+                "speed_kmh": 39,
+                "cabin_temp_c": 24.5,
+                "tire_pressure_psi": 34.2,
+                "driver": self.drivers[5]
+            },
+            {
+                "id": 7,
+                "vehicle_number": "TS09MN6789",
+                "type": "Ashok Leyland FCEV Hydrogen",
+                "transit_mode": "HYDROGEN_FCEV",
+                "capacity": 48,
+                "battery_or_fuel_pct": 88,
+                "current_latitude": 17.4580,
+                "current_longitude": 78.3710,
+                "status": "ACTIVE",
+                "speed_kmh": 44,
+                "cabin_temp_c": 21.5,
+                "tire_pressure_psi": 35.5,
+                "driver": self.drivers[6]
+            },
+            {
+                "id": 8,
+                "vehicle_number": "TS09OP0123",
+                "type": "Eicher Skyline Pro EV",
+                "transit_mode": "ELECTRIC_BUS",
+                "capacity": 32,
+                "battery_or_fuel_pct": 47,
+                "current_latitude": 17.3990,
+                "current_longitude": 78.4600,
+                "status": "CHARGING",
+                "speed_kmh": 0,
+                "cabin_temp_c": 25.0,
+                "tire_pressure_psi": 34.0,
+                "driver": self.drivers[7]
             }
         ]
 

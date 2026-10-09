@@ -1,6 +1,7 @@
 package com.urbanmobility.security;
 
 import org.springframework.context.annotation.*;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,8 +25,12 @@ public class SecurityConfig {
             .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth->auth
                 .requestMatchers("/api/auth/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/actuator/**").permitAll()
-                .requestMatchers("/api/rag/**").permitAll()
-                .requestMatchers("/api/routes/calculate","/api/routes","/api/vehicles","/api/traffic").authenticated()
+                .requestMatchers("/api/rag/**", "/api/ingestion/**").permitAll()
+                .requestMatchers("/api/routes/calculate").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/routes/**", "/api/vehicles/**", "/api/traffic/**", "/api/trips/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/routes/**", "/api/vehicles/**", "/api/traffic/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/routes/**", "/api/vehicles/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/routes/**", "/api/vehicles/**").hasRole("ADMIN")
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated())
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -35,8 +40,8 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration c=new CorsConfiguration();
-        c.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:3000"));
-        c.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+        c.setAllowedOriginPatterns(List.of("*"));
+        c.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS","PATCH"));
         c.setAllowedHeaders(List.of("*"));
         c.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource s=new UrlBasedCorsConfigurationSource();

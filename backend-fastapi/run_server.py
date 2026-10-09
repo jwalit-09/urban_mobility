@@ -271,7 +271,17 @@ else:
     def run():
         port = int(os.getenv("PORT", 8000))
         server_address = ('0.0.0.0', port)
-        httpd = HTTPServer(server_address, MobilityHttpHandler)
+        HTTPServer.allow_reuse_address = True
+        try:
+            httpd = HTTPServer(server_address, MobilityHttpHandler)
+        except OSError as e:
+            if "Address already in use" in str(e):
+                print(f"[!] Port {port} is currently busy. Trying port {port + 1}...")
+                port += 1
+                server_address = ('0.0.0.0', port)
+                httpd = HTTPServer(server_address, MobilityHttpHandler)
+            else:
+                raise
         print(f">>> Urban Mobility Backend running on http://0.0.0.0:{port} (Zero-Dependency Engine Active)")
         httpd.serve_forever()
 
